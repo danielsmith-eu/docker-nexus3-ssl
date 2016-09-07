@@ -1,10 +1,4 @@
 FROM ubuntu:14.04
-MAINTAINER Elium Tech <tech@elium.io>
-
-#### Some args to build the docker --build-args
-ENV SSL_STOREPASS=changeit
-ENV SSL_KEYPASS=changeit
-ENV SSL_DOMAIN_NAME="elium.io"
 
 #### set environment to fix term not set issues when building docker image ####
 ENV DEBIAN_FRONTEND noninteractive
@@ -13,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV SONATYPE_WORK /opt/nexus/
 ENV SSL_WORK /etc/ssl/private
 ENV NEXUS_DATA /nexus-data
-ENV NEXUS_VERSION 3.0.0-03
+ENV NEXUS_VERSION 3.0.1-01
 
 #### Add run script ####
 ADD run ${SONATYPE_WORK}/bin/run
@@ -62,10 +56,10 @@ RUN mkdir -p ${SONATYPE_WORK}etc/ssl
 RUN sed -i -e '/nexus-args=/ s/=.*/=${karaf.etc}\/jetty.xml,${karaf.etc}\/jetty-requestlog.xml,${karaf.etc}\/jetty-http.xml,${karaf.etc}\/jetty-https.xml,${karaf.etc}\/jetty-http-redirect-to-https.xml/' ${SONATYPE_WORK}etc/org.sonatype.nexus.cfg \
   && echo "application-port-ssl=8443" >> ${SONATYPE_WORK}etc/org.sonatype.nexus.cfg \
   && sed -i 's/<Set name="KeyStorePath">.*<\/Set>/<Set name="KeyStorePath">\/opt\/nexus\/etc\/ssl\/server-keystore.jks<\/Set>/g' /${SONATYPE_WORK}etc/jetty-https.xml \
-  && sed -i 's/<Set name="KeyStorePassword">.*<\/Set>/<Set name="KeyStorePassword">changeit<\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml \
-  && sed -i 's/<Set name="KeyManagerPassword">.*<\/Set>/<Set name="KeyManagerPassword">changeit<\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml \
+  && sed -i 's/<Set name="KeyStorePassword">.*<\/Set>/<Set name="KeyStorePassword"><\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml \
+  && sed -i 's/<Set name="KeyManagerPassword">.*<\/Set>/<Set name="KeyManagerPassword"><\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml \
   && sed -i 's/<Set name="TrustStorePath">.*<\/Set>/<Set name="TrustStorePath">\/opt\/nexus\/etc\/ssl\/server-keystore.jks<\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml \
-  && sed -i 's/<Set name="TrustStorePassword">.*<\/Set>/<Set name="TrustStorePassword">changeit<\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml
+  && sed -i 's/<Set name="TrustStorePassword">.*<\/Set>/<Set name="TrustStorePassword"><\/Set>/g' ${SONATYPE_WORK}etc/jetty-https.xml
 
 
 #### Add User Nexus ####
@@ -95,4 +89,4 @@ ENV JAVA_MAX_MEM 1200m
 ENV JAVA_MIN_MEM 1200m
 ENV EXTRA_JAVA_OPTS ""
 
-CMD bin/run
+CMD ["bin/run"]
